@@ -1,0 +1,12 @@
+linters:
+  enable-all: true
+  disable:
+    - err113
+    - execinquery
+    - exhaustruct
+    - depguard
+    - gomnd
+    - nlreturn
+    - varnamelen
+    - wrapcheck
+    - wsl

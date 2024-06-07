@@ -1,0 +1,26 @@
+version: "3"
+
+tasks:
+  default:
+    cmds:
+      - task -l
+    silent: true
+
+  install:
+    cmds:
+      - go install ./
+
+  test:
+    cmds:
+      - go mod tidy
+      - golangci-lint run --fix ./...
+      - deadcode ./...
+      - go test -v -race ./...
+
+  cover:
+    desc: Show test coverage
+    cmds:
+      - go test -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out -o coverage.html
+      - rm coverage.out
+      - xdg-open coverage.html
