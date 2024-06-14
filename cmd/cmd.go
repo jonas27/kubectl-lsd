@@ -11,15 +11,12 @@ import (
 )
 
 func LSD(in []byte) (string, error) {
-	// neat, err := cmd.Neat(string(in))
-	// if err != nil {
-	//   return "", fmt.Errorf("error running Neat: %w", err)
-	// }
 	return internal.Run(in)
 }
 
 // https://github.com/spf13/cobra/issues/1336#issuecomment-773598580
-// Execute is the entry point for the command package.
+// Execute adds all child commands to the root command and
+// executes the selected command.
 func Execute() error {
 	var inputFile *string
 
@@ -27,9 +24,9 @@ func Execute() error {
 		Use: "lsd",
 		Example: `kubectl get secret my-secret -o yaml | kubectl lsd
 kubectl get secret mysecret -oyaml | kubectl lsd
-kubectl neat -f - <./my-secret.json
-kubectl neat -f ./my-secret.json
-kubectl neat -f ./my-secret.json`,
+kubectl lsd -f - <./my-secret.json
+kubectl lsd -f ./my-secret.json
+kubectl lsd -f ./my-secret.json`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			var in []byte
 			var err error
@@ -56,7 +53,7 @@ kubectl neat -f ./my-secret.json`,
 	rootCmd.SetOut(os.Stdout)
 	rootCmd.SetErr(os.Stderr)
 
-	inputFile = rootCmd.Flags().StringP("file", "f", "-", "file path to neat, or - to read from stdin")
+	inputFile = rootCmd.Flags().StringP("file", "f", "-", "file path to lsd, or - to read from stdin")
 	if err := rootCmd.MarkFlagFilename("file"); err != nil {
 		return fmt.Errorf("error marking flag filename: %w", err)
 	}
@@ -75,8 +72,8 @@ func getCmd() *cobra.Command {
 	getCmd := &cobra.Command{
 		Use: "get",
 		Example: `kubectl lsd get -- secret mysecret -oyaml
-kubectl lsd get -- secret -n default mysecret --output json`,
-		FParseErrWhitelist: cobra.FParseErrWhitelist{UnknownFlags: true}, // don't try to validate kubectl get's flags
+kubectl lsd get -- secret -n default mysecret -ojson`,
+		FParseErrWhitelist: cobra.FParseErrWhitelist{UnknownFlags: true}, // do not validate kubectl get flags
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var err error
 
